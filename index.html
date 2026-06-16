@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кофейня · Сорта и десерты</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            background: #f8f5f0;
+            display: flex;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        .cafe-container {
+            max-width: 1100px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+            padding: 2rem 2rem 2.5rem;
+        }
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #2e241e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0.25rem;
+        }
+        .subhead {
+            color: #6b5a4e;
+            border-left: 3px solid #d9b382;
+            padding-left: 16px;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+        /* поиск + панель управления */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            background: #f3efe9;
+            padding: 0.75rem 1.5rem;
+            border-radius: 60px;
+        }
+        .search-wrap {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 40px;
+            padding: 0.2rem 0.2rem 0.2rem 1.2rem;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            flex: 1 1 260px;
+        }
+        .search-wrap input {
+            border: none;
+            padding: 0.6rem 0;
+            font-size: 0.95rem;
+            width: 100%;
+            background: transparent;
+            outline: none;
+        }
+        .search-wrap input::placeholder {
+            color: #b5a69a;
+            font-weight: 300;
+        }
+        .search-wrap button {
+            background: #d9b382;
+            border: none;
+            color: white;
+            padding: 0.45rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: default;
+            letter-spacing: 0.3px;
+            transition: 0.1s;
+            white-space: nowrap;
+        }
+        .search-wrap button:hover {
+            background: #c9a06e;
+        }
+        .sort-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+        .sort-badge span {
+            font-size: 0.85rem;
+            color: #4d3e34;
+            font-weight: 500;
+        }
+        .sort-btn {
+            background: transparent;
+            border: 1px solid #d6cbbc;
+            padding: 0.25rem 1rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            color: #3d332b;
+            cursor: default;
+            transition: 0.1s;
+            background: white;
+        }
+        .sort-btn.active {
+            background: #d9b382;
+            border-color: #d9b382;
+            color: white;
+        }
+        /* карточная сетка */
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.8rem;
+            margin: 1.8rem 0 2rem;
+        }
+        .item-card {
+            background: #fcfaf7;
+            border-radius: 24px;
+            padding: 1.2rem 1rem 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            border: 1px solid #ede8e0;
+            transition: 0.15s;
+        }
+        .item-card:hover {
+            border-color: #d9b382;
+        }
+        .item-category {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #b2957a;
+            font-weight: 600;
+        }
+        .item-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin: 0.3rem 0 0.2rem;
+            color: #2b1f19;
+        }
+        .item-desc {
+            font-size: 0.85rem;
+            color: #5d4e42;
+            margin: 0.2rem 0 0.5rem;
+            line-height: 1.4;
+        }
+        .item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.6rem;
+            border-top: 1px dashed #e5dcd2;
+            padding-top: 0.6rem;
+            font-size: 0.9rem;
+        }
+        .item-price {
+            font-weight: 600;
+            color: #3f2c1e;
+        }
+        .item-extra {
+            color: #7f6a5b;
+            font-size: 0.8rem;
+            background: #efe8e0;
+            padding: 0.1rem 0.6rem;
+            border-radius: 50px;
+        }
+        /* пагинация */
+        .pagination {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid #e9e0d7;
+        }
+        .page-btn {
+            background: white;
+            border: 1px solid #d9cdc0;
+            color: #3d332b;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            cursor: default;
+            transition: 0.1s;
+            min-width: 48px;
+        }
+        .page-btn.active-page {
+            background: #d9b382;
+            border-color: #d9b382;
+            color: white;
+        }
+        .page-btn:hover {
+            background: #f0e8df;
+        }
+        .page-btn.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .page-info {
+            font-size: 0.9rem;
+            color: #5e4d3f;
+            padding: 0 0.5rem;
+        }
+    </style>
+</head>
+<body>
+<div class="cafe-container">
+
+    <h1>Кофейня</h1>
+    <div class="subhead">Сорта кофе · Десерты · Выпечка</div>
+
+    <div class="toolbar">
+        <div class="search-wrap">
+            <input type="text" id="searchInput" placeholder="Поиск по названию или описанию..." aria-label="Поиск">
+            <button type="button" id="searchButton" aria-label="Найти">🔍</button>
+        </div>
+
+        <div class="sort-badge">
+            <span>Сортировать:</span>
+            <button class="sort-btn active" data-sort="default" id="sortDefault">По умолчанию</button>
+            <button class="sort-btn" data-sort="name" id="sortName">По названию</button>
+            <button class="sort-btn" data-sort="price" id="sortPrice">По цене</button>
+        </div>
+    </div>
+
+    <div class="items-grid" id="itemsGrid">
+        <div class="item-card" data-name="Эфиопия Сидамо" data-price="420" data-category="кофе">
+            <div class="item-category">☕ Зерновой кофе</div>
+            <div class="item-name">Эфиопия Сидамо</div>
+            <div class="item-desc">Фруктовый, с нотами черники и тёмного шоколада</div>
+            <div class="item-meta">
+                <span class="item-price">420 ₽ / 250г</span>
+                <span class="item-extra">средняя обжарка</span>
+            </div>
+        </div>
+        <div class="item-card" data-name="Колумбия Супремо" data-price="490" data-category="кофе">
+            <div class="item-category">☕ Зерновой кофе</div>
+            <div class="item-name">Колумбия Супремо</div>
+            <div class="item-desc">Сбалансированный, ореховый, с карамельным послевкусием</div>
+            <div class="item-meta">
+                <span class="item-price">490 ₽ / 250г</span>
+                <span class="item-extra">средняя обжарка</span>
+            </div>
+        </div>
+        <div class="item-card" data-name="Бразилия Сантос" data-price="370" data-category="кофе">
+            <div class="item-category">☕ Зерновой кофе</div>
+            <div class="item-name">Бразилия Сантос</div>
+            <div class="item-desc">Нежный, с оттенками молочного шоколада и арахиса</div>
+            <div class="item-meta">
+                <span class="item-price">370 ₽ / 250г</span>
+                <span class="item-extra">тёмная обжарка</span>
+            </div>
+        </div>
+        <div class="item-card" data-name="Тирамису" data-price="350" data-category="десерт">
+            <div class="item-category">🍰 Десерт</div>
+            <div class="item-name">Тирамису</div>
+            <div class="item-desc">Классический итальянский десерт с кофейным бисквитом</div>
+            <div class="item-meta">
+                <span class="item-price">350 ₽ / порция</span>
+                <span class="item-extra">с маскарпоне</span>
+            </div>
+        </div>
+        <div class="item-card" data-name="Медовик" data-price="280" data-category="десерт">
+            <div class="item-category">🍰 Десерт</div>
+            <div class="item-name">Медовик</div>
+            <div class="item-desc">Нежный мёдовый корж со сметанным кремом</div>
+            <div class="item-meta">
+                <span class="item-price">280 ₽ / порция</span>
+                <span class="item-extra">с грецким орехом</span>
+            </div>
+        </div>
+        <div class="item-card" data-name="Круассан с миндалём" data-price="210" data-category="выпечка">
+            <div class="item-category">🥐 Выпечка</div>
+            <div class="item-name">Круассан с миндалём</div>
+            <div class="item-desc">Слоёный, с миндальной пастой и хрустящей корочкой</div>
+            <div class="item-meta">
+                <span class="item-price">210 ₽ / шт</span>
+                <span class="item-extra">с миндальными хлопьями</span>
+            </div>
+        </div>
+        <div class="item-card" data-name="Печенье с шоколадом" data-price="150" data-category="выпечка">
+            <div class="item-category">🍪 Выпечка</div>
+            <div class="item-name">Печенье с шоколадом</div>
+            <div class="item-desc">Хрустящее, с крупными кусочками тёмного шоколада</div>
+            <div class="item-meta">
+                <span class="item-price">150 ₽ / 100г</span>
+                <span class="item-extra">с морской солью</span>
+            </div>
+        </div>
+        <div class="item-card" data-name="Гватемала Антигуа" data-price="530" data-category="кофе">
+            <div class="item-category">☕ Зерновой кофе</div>
+            <div class="item-name">Гватемала Антигуа</div>
+            <div class="item-desc">Дымный, с оттенками какао и пряностей</div>
+            <div class="item-meta">
+                <span class="item-price">530 ₽ / 250г</span>
+                <span class="item-extra">средняя обжарка</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="pagination" id="paginationControls">
+        <button class="page-btn" id="prevPage" ><<</button>
+        <button class="page-btn active-page" data-page="1">1</button>
+        <button class="page-btn" data-page="2">2</button>
+        <button class="page-btn" data-page="3">3</button>
+        <button class="page-btn" id="nextPage">>></button>
+    </div>
+</div>
+</body> 
+</html>

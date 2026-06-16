@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Эфиопия Сидамо · Детальная страница</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            background: #f8f5f0;
+            display: flex;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        .product-container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+            padding: 2rem 2.5rem 2.5rem;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            color: #6b5a4e;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            color: #d9b382;
+        }
+
+        /* Галерея */
+        .gallery {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .gallery-main {
+            flex: 2;
+            min-width: 280px;
+            background: #f3efe9;
+            border-radius: 24px;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            overflow: hidden;
+        }
+        .gallery-main img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+            max-height: 400px;
+        }
+        .gallery-thumbnails {
+            flex: 1;
+            min-width: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .gallery-thumbnails .thumb {
+            background: #f3efe9;
+            border-radius: 16px;
+            padding: 0.3rem;
+            text-align: center;
+            border: 3px solid transparent;
+            transition: 0.15s;
+            cursor: default;
+            overflow: hidden;
+            height: 80px;
+        }
+        .gallery-thumbnails .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        .gallery-thumbnails .thumb.active {
+            border-color: #d9b382;
+            background: #fcfaf7;
+        }
+        .gallery-thumbnails .thumb:hover {
+            border-color: #d9b382;
+        }
+
+        /* Информация о товаре */
+        .product-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        @media (max-width: 700px) {
+            .product-info {
+                grid-template-columns: 1fr;
+            }
+        }
+        .product-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #2e241e;
+            margin-bottom: 0.5rem;
+        }
+        .product-category {
+            color: #b2957a;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .product-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #3f2c1e;
+            margin: 0.5rem 0 1rem;
+        }
+        .product-description {
+            color: #5d4e42;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .specs {
+            background: #f8f5f0;
+            border-radius: 16px;
+            padding: 1.2rem 1.5rem;
+        }
+        .specs h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: #6b5a4e;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.8rem;
+        }
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid #ede8e0;
+            font-size: 0.95rem;
+        }
+        .spec-item:last-child {
+            border-bottom: none;
+        }
+        .spec-label {
+            color: #8a7a6e;
+        }
+        .spec-value {
+            color: #2e241e;
+            font-weight: 500;
+        }
+
+        /* Отзывы */
+        .reviews-section {
+            margin-top: 2.5rem;
+            border-top: 2px solid #f3efe9;
+            padding-top: 1.8rem;
+        }
+        .reviews-section h2 {
+            font-size: 1.3rem;
+            color: #2e241e;
+            margin-bottom: 1.2rem;
+        }
+        .review-card {
+            background: #fcfaf7;
+            border: 1px solid #ede8e0;
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 0.8rem;
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.3rem;
+        }
+        .review-author {
+            font-weight: 600;
+            color: #2e241e;
+        }
+        .review-date {
+            font-size: 0.75rem;
+            color: #a49181;
+        }
+        .review-text {
+            color: #5d4e42;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            text-align: right;
+            color: #a49181;
+            border-top: 1px solid #ede6dd;
+            padding-top: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+<div class="product-container">
+
+    <div class="gallery">
+        <div class="gallery-main">
+            <img src="https://tse3.mm.bing.net/th/id/OIP.KnHlNWli2hfj1zgTk6s6JAHaHM?r=0&cb=thfc1falcon2&rs=1&pid=ImgDetMain&o=7&rm=3">
+        </div>
+        <div class="gallery-thumbnails">
+            <div class="thumb active">
+                <img src="https://tse2.mm.bing.net/th/id/OIP.hKJRuW4vlXm_yC3w2EGqnAHaHa?r=0&cb=thfc1falcon2&w=720&h=720&rs=1&pid=ImgDetMain&o=7&rm=3">
+            </div>
+            <div class="thumb">
+                <img src="https://tse2.mm.bing.net/th/id/OIP.hKJRuW4vlXm_yC3w2EGqnAHaHa?r=0&cb=thfc1falcon2&w=720&h=720&rs=1&pid=ImgDetMain&o=7&rm=3">
+            </div>
+            <div class="thumb">
+                <img src="https://tse2.mm.bing.net/th/id/OIP.hKJRuW4vlXm_yC3w2EGqnAHaHa?r=0&cb=thfc1falcon2&w=720&h=720&rs=1&pid=ImgDetMain&o=7&rm=3">
+            </div>
+            <div class="thumb">
+                <img src="https://tse2.mm.bing.net/th/id/OIP.hKJRuW4vlXm_yC3w2EGqnAHaHa?r=0&cb=thfc1falcon2&w=720&h=720&rs=1&pid=ImgDetMain&o=7&rm=3">
+            </div>
+        </div>
+    </div>
+
+    <div class="product-info">
+        <div>
+            <div class="product-category">☕ Зерновой кофе</div>
+            <h1 class="product-title">Эфиопия Сидамо</h1>
+            <div class="product-price">420 ₽ / 250 г</div>
+            <p class="product-description">
+                <strong>Описание:</strong> Эфиопия Сидамо — это изысканный сорт кофе с ярким фруктовым профилем.
+                Вкус раскрывается нотами черники, тёмного шоколада и лёгкой цитрусовой кислинкой.
+                Идеально для приготовления в фильтре или френч-прессе.
+            </p>
+            <p class="product-description">
+                <strong>Характеристики:</strong> Зерна проходят тщательный отбор и обжарку по специальной технологии
+                для сохранения уникального букета. Рекомендуем использовать в течение месяца после обжарки.
+            </p>
+        </div>
+        <div class="specs">
+            <h3>Характеристики</h3>
+            <div class="spec-item"><span class="spec-label">Страна</span><span class="spec-value">Эфиопия</span></div>
+            <div class="spec-item"><span class="spec-label">Регион</span><span class="spec-value">Сидамо</span></div>
+            <div class="spec-item"><span class="spec-label">Высота</span><span class="spec-value">1800–2200 м</span></div>
+            <div class="spec-item"><span class="spec-label">Обжарка</span><span class="spec-value">Средняя</span></div>
+            <div class="spec-item"><span class="spec-label">Вкус</span><span class="spec-value">Фруктовый, шоколадный</span></div>
+            <div class="spec-item"><span class="spec-label">Аромат</span><span class="spec-value">Ягоды, карамель</span></div>
+            <div class="spec-item"><span class="spec-label">Упаковка</span><span class="spec-value">250 г / 500 г</span></div>
+        </div>
+    </div>
+
+    <div class="reviews-section">
+        <h2>Отзывы</h2>
+
+        <div class="review-card">
+            <div class="review-header">
+                <span class="review-author">Анна К.</span>
+                <span class="review-date">15.06.2026</span>
+            </div>
+            <p class="review-text">
+                Потрясающий кофе! Яркий, насыщенный, с длительным послевкусием. Чувствуется каждая нота.
+                Буду заказывать ещё!
+            </p>
+        </div>
+
+        <div class="review-card">
+            <div class="review-header">
+                <span class="review-author">Михаил С.</span>
+                <span class="review-date">10.06.2026</span>
+            </div>
+            <p class="review-text">
+                Очень достойный сорт. Особенно понравилась кислинка — она мягкая и приятная.
+                Чуть меньше оценка за то, что аромат не такой стойкий, как ожидал.
+            </p>
+        </div>
+
+        <div class="review-card">
+            <div class="review-header">
+                <span class="review-author">Елена Д.</span>
+                <span class="review-date">05.06.2026</span>
+            </div>
+            <p class="review-text">
+                Лучший кофе для утреннего настроения! Рекомендую всем любителям фруктовых сортов.
+                Отличная обжарка, зерна ровные и красивые.
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
