@@ -43,7 +43,6 @@
             font-size: 1rem;
             font-weight: 400;
         }
-        /* поиск + панель управления */
         .toolbar {
             display: flex;
             flex-wrap: wrap;
@@ -84,7 +83,7 @@
             border-radius: 40px;
             font-weight: 500;
             font-size: 0.9rem;
-            cursor: default;
+            cursor: pointer;
             letter-spacing: 0.3px;
             transition: 0.1s;
             white-space: nowrap;
@@ -110,16 +109,18 @@
             border-radius: 30px;
             font-size: 0.85rem;
             color: #3d332b;
-            cursor: default;
+            cursor: pointer;
             transition: 0.1s;
             background: white;
+        }
+        .sort-btn:hover {
+            background: #ede8e0;
         }
         .sort-btn.active {
             background: #d9b382;
             border-color: #d9b382;
             color: white;
         }
-        /* карточная сетка */
         .items-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -136,6 +137,9 @@
         }
         .item-card:hover {
             border-color: #d9b382;
+        }
+        .item-card.hidden {
+            display: none;
         }
         .item-category {
             font-size: 0.7rem;
@@ -176,7 +180,6 @@
             padding: 0.1rem 0.6rem;
             border-radius: 50px;
         }
-        /* пагинация */
         .pagination {
             display: flex;
             flex-wrap: wrap;
@@ -194,49 +197,74 @@
             padding: 0.3rem 1rem;
             border-radius: 30px;
             font-size: 0.9rem;
-            cursor: default;
+            cursor: pointer;
             transition: 0.1s;
             min-width: 48px;
+        }
+        .page-btn:hover {
+            background: #f0e8df;
         }
         .page-btn.active-page {
             background: #d9b382;
             border-color: #d9b382;
             color: white;
         }
-        .page-btn:hover {
-            background: #f0e8df;
-        }
-        .page-btn.disabled {
+        .page-btn:disabled {
             opacity: 0.5;
-            pointer-events: none;
+            cursor: not-allowed;
         }
         .page-info {
             font-size: 0.9rem;
             color: #5e4d3f;
             padding: 0 0.5rem;
         }
+        .items-count {
+            text-align: center;
+            color: #8a7a6e;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        footer {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            text-align: right;
+            color: #a49181;
+            border-top: 1px solid #ede6dd;
+            padding-top: 1.2rem;
+        }
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            color: #8a7a6e;
+            font-size: 1.1rem;
+            grid-column: 1 / -1;
+        }
     </style>
 </head>
 <body>
 <div class="cafe-container">
 
-    <h1>Кофейня</h1>
+    <h1>☕ Кофейня</h1>
     <div class="subhead">Сорта кофе · Десерты · Выпечка</div>
 
+    <!-- Панель: поиск + сортировка -->
     <div class="toolbar">
         <div class="search-wrap">
-            <input type="text" id="searchInput" placeholder="Поиск по названию или описанию..." aria-label="Поиск">
-            <button type="button" id="searchButton" aria-label="Найти">🔍</button>
+            <input type="text" id="searchInput" placeholder="Поиск по названию..." aria-label="Поиск">
+            <button type="button" id="searchButton">🔍 Найти</button>
         </div>
-
         <div class="sort-badge">
             <span>Сортировать:</span>
-            <button class="sort-btn active" data-sort="default" id="sortDefault">По умолчанию</button>
-            <button class="sort-btn" data-sort="name" id="sortName">По названию</button>
-            <button class="sort-btn" data-sort="price" id="sortPrice">По цене</button>
+            <button class="sort-btn active" data-sort="default">По умолчанию</button>
+            <button class="sort-btn" data-sort="name">По названию</button>
+            <button class="sort-btn" data-sort="price">По цене</button>
         </div>
     </div>
 
+    <!-- Счётчик товаров -->
+    <div class="items-count" id="itemsCount">Найдено: 8 товаров</div>
+
+    <!-- Список товаров -->
     <div class="items-grid" id="itemsGrid">
         <div class="item-card" data-name="Эфиопия Сидамо" data-price="420" data-category="кофе">
             <div class="item-category">☕ Зерновой кофе</div>
@@ -312,13 +340,171 @@
         </div>
     </div>
 
+    <!-- Пагинация -->
     <div class="pagination" id="paginationControls">
-        <button class="page-btn" id="prevPage" ><<</button>
-        <button class="page-btn active-page" data-page="1">1</button>
-        <button class="page-btn" data-page="2">2</button>
-        <button class="page-btn" data-page="3">3</button>
-        <button class="page-btn" id="nextPage">>></button>
+        <button class="page-btn" id="prevPage">←</button>
+        <div id="pageNumbers"></div>
+        <button class="page-btn" id="nextPage">→</button>
+        <span class="page-info" id="pageInfo">Страница 1 из 1</span>
     </div>
 </div>
-</body> 
+
+<script>
+    const itemsGrid = document.getElementById('itemsGrid');
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const sortButtons = document.querySelectorAll('.sort-btn');
+    const prevPageBtn = document.getElementById('prevPage');
+    const nextPageBtn = document.getElementById('nextPage');
+    const pageNumbers = document.getElementById('pageNumbers');
+    const pageInfo = document.getElementById('pageInfo');
+    const itemsCount = document.getElementById('itemsCount');
+
+    let allItems = Array.from(document.querySelectorAll('.item-card'));
+    let filteredItems = [...allItems];
+
+    // ============================================================
+    // 2. НАСТРОЙКИ ПАГИНАЦИИ
+    // ============================================================
+    const itemsPerPage = 3;
+    let currentPage = 1;
+
+    // ============================================================
+    // 3. ФУНКЦИЯ ОТОБРАЖЕНИЯ ТОВАРОВ (с пагинацией)
+    // ============================================================
+    function renderItems() {
+        // Скрываем все
+        allItems.forEach(item => item.classList.add('hidden'));
+
+        // Если нет товаров
+        if (filteredItems.length === 0) {
+            itemsGrid.innerHTML = '<div class="no-results">😕 Товаров не найдено</div>';
+            itemsCount.textContent = 'Найдено: 0 товаров';
+            updatePagination();
+            return;
+        }
+
+        // Восстанавливаем карточки в сетке (если был показан no-results)
+        const noResults = itemsGrid.querySelector('.no-results');
+        if (noResults) noResults.remove();
+
+        // Добавляем все карточки обратно (если их удалили)
+        filteredItems.forEach(item => {
+            itemsGrid.appendChild(item);
+        });
+
+        // Вычисляем индексы для текущей страницы
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, filteredItems.length);
+
+        // Показываем только нужные
+        filteredItems.forEach((item, index) => {
+            if (index >= startIndex && index < endIndex) {
+                item.classList.remove('hidden');
+            } else {
+                item.classList.add('hidden');
+            }
+        });
+
+        itemsCount.textContent = `Найдено: ${filteredItems.length} товаров`;
+
+        updatePagination();
+    }
+
+    function updatePagination() {
+        const totalPages = Math.ceil(filteredItems.length / itemsPerPage) || 1;
+
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        prevPageBtn.disabled = currentPage === 1;
+        nextPageBtn.disabled = currentPage === totalPages;
+
+        pageInfo.textContent = `Страница ${currentPage} из ${totalPages}`;
+
+        pageNumbers.innerHTML = '';
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'page-btn' + (i === currentPage ? ' active-page' : '');
+            btn.textContent = i;
+            btn.dataset.page = i;
+            btn.addEventListener('click', () => {
+                currentPage = i;
+                renderItems();
+            });
+            pageNumbers.appendChild(btn);
+        }
+    }
+
+    function filterItems() {
+        const query = searchInput.value.toLowerCase().trim();
+
+        if (query === '') {
+            filteredItems = [...allItems];
+        } else {
+            filteredItems = allItems.filter(item => {
+                const name = item.dataset.name.toLowerCase();
+                return name.includes(query);
+            });
+        }
+
+        currentPage = 1;
+        renderItems();
+    }
+
+    // ============================================================
+    // 6. ФУНКЦИЯ СОРТИРОВКИ
+    // ============================================================
+    function sortItems(sortType) {
+        const grid = itemsGrid;
+
+        allItems.forEach(item => grid.removeChild(item));
+
+        if (sortType === 'default') {
+        } else if (sortType === 'name') {
+            allItems.sort((a, b) => {
+                return a.dataset.name.localeCompare(b.dataset.name);
+            });
+        } else if (sortType === 'price') {
+            allItems.sort((a, b) => {
+                return parseInt(a.dataset.price) - parseInt(b.dataset.price);
+            });
+        }
+
+        allItems.forEach(item => grid.appendChild(item));
+
+        filteredItems = [...allItems];
+
+        currentPage = 1;
+        renderItems();
+    }
+
+    searchButton.addEventListener('click', filterItems);
+
+    sortButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            sortButtons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            const sortType = this.dataset.sort;
+            sortItems(sortType);
+        });
+    });
+
+    prevPageBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderItems();
+        }
+    });
+
+    nextPageBtn.addEventListener('click', () => {
+        const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderItems();
+        }
+    });
+    renderItems();
+</script>
+</body>
 </html>
